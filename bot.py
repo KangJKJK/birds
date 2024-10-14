@@ -191,7 +191,12 @@ def auto_mint_worm(data):
             return
 
         # process_mint_worm 함수 호출
-        process_mint_worm(data)
+        result = process_mint_worm(data)
+        
+        if result is None:
+            base.log(f"{base.yellow}Auto Mint Worm: 상태 확인 불가")
+        else:
+            base.log(f"{base.green}Auto Mint Worm: {result}")
 
         base.log(f"{base.green}지렁이 민팅 작업 완료")
 
@@ -206,12 +211,18 @@ def auto_hatch_egg(data):
             return
 
         # process_break_egg 함수 호출
-        process_break_egg(data)
+        result = process_break_egg(data)
+        
+        if result is None:
+            base.log(f"{base.yellow}Auto Hatch Egg: 상태 확인 불가")
+        else:
+            base.log(f"{base.green}Auto Hatch Egg: {result}")
 
         base.log(f"{base.green}알 깨기 작업 완료")
 
     except Exception as e:
         base.log(f"{base.red}알 깨기 중 오류 발생: {str(e)}")
+        base.log(f"{base.red}오류 상세 정보: {str(e.__class__.__name__)}: {str(e)}")
 
 if __name__ == "__main__":
     try:
