@@ -1,22 +1,7 @@
 import requests
-import json
 
 from hokireceh_claimer import base
 from core.headers import headers
-
-
-def read_data_file():
-    try:
-        with open('data.txt', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-        return data
-    except json.JSONDecodeError as e:
-        base.log(f"{base.red}Error decoding JSON from data.txt: {str(e)}")
-    except FileNotFoundError:
-        base.log(f"{base.red}data.txt file not found.")
-    except Exception as e:
-        base.log(f"{base.red}Error reading data.txt: {str(e)}")
-    return None
 
 
 def get_task(data, proxies=None):
@@ -75,15 +60,7 @@ def check_completed_task(data, proxies=None):
 
 def process_do_task(data, proxies=None):
     task_group = get_task(data=data, proxies=proxies)
-    if task_group is None:
-        base.log(f"{base.red}Failed to get tasks. Please check your connection or authentication.")
-        return
-
     completed_tasks = check_completed_task(data=data, proxies=proxies)
-    if completed_tasks is None:
-        base.log(f"{base.red}Failed to check completed tasks. Please check your connection or authentication.")
-        return
-
     for group in task_group:
         group_name = group["name"]
         task_list = group["tasks"]
@@ -176,15 +153,3 @@ def process_boost_speed(data, proxies=None):
         base.log(
             f"{base.green}Current Speed: {base.white}x {current_speed} - {base.green}Max speed reached"
         )
-
-
-# 메인 로직 (이 부분은 실제 실행 스크립트에 있어야 합니다)
-if __name__ == "__main__":
-    data = read_data_file()
-    if data is None:
-        base.log(f"{base.red}Failed to load data from data.txt. Exiting.")
-        exit(1)
-
-    # 데이터 처리 계속...
-    process_do_task(data)
-    process_boost_speed(data)
