@@ -1,4 +1,5 @@
 import requests
+import urllib.parse
 
 from hokireceh_claimer import base
 from core.headers import headers
@@ -8,13 +9,15 @@ def mint_status(data, proxies=None):
     url = "https://worm.birds.dog/worms/mint-status"
 
     try:
+        # URL 인코딩 적용
+        encoded_headers = {k: urllib.parse.quote(v) for k, v in headers(auth=data).items()}
         response = requests.get(
             url=url,
-            headers=headers(auth=data),
+            headers=encoded_headers,
             proxies=proxies,
             timeout=20,
         )
-        response.raise_for_status()  # 추가: HTTP 오류 발생 시 예외 발생
+        response.raise_for_status()
         data = response.json()
         status = data["data"]["status"]
 
