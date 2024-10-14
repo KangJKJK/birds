@@ -69,18 +69,12 @@ def process_do_task(data):
         base.log(f"{base.yellow}처리할 데이터 구조: {base.white}{type(data)}")
         base.log(f"{base.yellow}데이터 내용: {base.white}{data}")
 
-        # URL 인코딩된 문자열에서 사용자 정보 추출
-        parsed_data = parse_qs(data)
-        user_info = json.loads(unquote(parsed_data['user'][0]))
-
+        user_info = data['user']
         user_id = user_info['id']
         username = user_info['username']
 
         base.log(f"{base.green}사용자 ID: {base.white}{user_id}")
         base.log(f"{base.green}사용자 이름: {base.white}{username}")
-
-        # 여기에 기존의 작업 수행 코드를 넣습니다.
-        # 예: 속도 부��트, 지렁이 민팅, 알 깨기 등
 
         # 자동 속도 부스트
         base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
@@ -100,9 +94,6 @@ def process_do_task(data):
     except KeyError as e:
         base.log(f"{base.red}키 오류: {base.white}{e}")
         base.log(f"{base.yellow}데이터에서 필요한 키를 찾을 수 없습니다.")
-    except json.JSONDecodeError as e:
-        base.log(f"{base.red}JSON 디코딩 오류: {base.white}{e}")
-        base.log(f"{base.yellow}사용자 정보를 JSON으로 파싱할 수 없습니다.")
     except Exception as e:
         base.log(f"{base.red}작업 수행 중 오류: {base.white}{e}")
     finally:
@@ -168,4 +159,3 @@ def process_boost_speed(data, proxies=None):
         base.log(
             f"{base.green}Current Speed: {base.white}x {current_speed} - {base.green}Max speed reached"
         )
-
