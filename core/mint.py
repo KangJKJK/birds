@@ -14,12 +14,18 @@ def mint_status(data, proxies=None):
             proxies=proxies,
             timeout=20,
         )
+        response.raise_for_status()  # 추가: HTTP 오류 발생 시 예외 발생
         data = response.json()
         status = data["data"]["status"]
 
         return status
-    except:
-        return None
+    except requests.exceptions.RequestException as e:
+        base.log(f"{base.red}민트 상태 확인 중 요청 오류: {str(e)}")
+    except KeyError as e:
+        base.log(f"{base.red}민트 상태 데이터 파싱 오류: {str(e)}")
+    except Exception as e:
+        base.log(f"{base.red}민트 상태 확인 중 예상치 못한 오류: {str(e)}")
+    return None
 
 
 def mint(data, proxies=None):
