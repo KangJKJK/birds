@@ -38,6 +38,7 @@ class Birds:
         )
 
         self.auto_break_egg = base.get_config(
+            
             config_file=self.config_file, config_name="auto-break-egg"
         )
 
@@ -49,67 +50,76 @@ class Birds:
         while True:
             base.clear_terminal()
             print(self.banner)
-            data = open(self.data_file, "r").read().splitlines()
+            try:
+                with open(self.data_file, "r", encoding="utf-8") as file:
+                    data = file.read().splitlines()
+                base.log(f"{base.green}데이터 파일 읽기 성공")
+            except Exception as e:
+                base.log(f"{base.red}데이터 파일 읽기 실패: {e}")
+                return
+
             num_acc = len(data)
-            base.log(self.line)
             base.log(f"{base.green}계정 수: {base.white}{num_acc}")
 
-            for no, data in enumerate(data):
-                base.log(self.line)
+            for no, account_data in enumerate(data):
                 base.log(f"{base.green}계정 번호: {base.white}{no+1}/{num_acc}")
+                base.log(f"{base.yellow}계정 데이터: {base.white}{account_data}")
 
                 try:
-                    get_info(data=data)
-
-                    # 작업 수행
+                    # 데이터 처리 로직
+                    processed_data = self.process_account_data(account_data)
+                    
                     if self.auto_do_task:
                         base.log(f"{base.yellow}자동 작업 수행: {base.green}켜짐")
-                        try:
-                            process_do_task(data=data)
-                        except Exception as e:
-                            base.log(f"{base.red}작업 수행 중 오류: {base.white}{e}")
-                            base.log(f"{base.yellow}데이터: {base.white}{data}")
+                        process_do_task(data=processed_data)
                     else:
                         base.log(f"{base.yellow}자동 작업 수행: {base.red}꺼짐")
 
                     # 속도 부스트
                     if self.auto_boost_speed:
                         base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
-                        process_boost_speed(data=data)
+                        process_boost_speed(data=processed_data)
                     else:
                         base.log(f"{base.yellow}자동 속도 부스트: {base.red}꺼짐")
 
                     # 지렁이 민팅
                     if self.auto_mint_worm:
                         base.log(f"{base.yellow}자동 지렁이 민팅: {base.green}켜짐")
-                        process_mint_worm(data=data)
+                        process_mint_worm(data=processed_data)
                     else:
                         base.log(f"{base.yellow}자동 지렁이 민팅: {base.red}꺼짐")
 
                     # 알 깨기
                     if self.auto_break_egg:
                         base.log(f"{base.yellow}자동 알 깨기: {base.green}켜짐")
-                        process_break_egg(data=data)
+                        process_break_egg(data=processed_data)
                     else:
                         base.log(f"{base.yellow}자동 알 깨기: {base.red}꺼짐")
 
                     # 알 업그레이드
                     if self.auto_upgrade_egg:
                         base.log(f"{base.yellow}자동 알 업그레이드: {base.green}켜짐")
-                        process_upgrade(data=data)
+                        process_upgrade(data=processed_data)
                     else:
                         base.log(f"{base.yellow}자동 알 업그레이드: {base.red}꺼짐")
 
-                    get_info(data=data)
-
                 except Exception as e:
-                    base.log(f"{base.red}오류: {base.white}{e}")
-                    base.log(f"{base.yellow}데이터: {base.white}{data}")
+                    base.log(f"{base.red}계정 처리 중 오류: {base.white}{e}")
 
             print()
             wait_time = 60 * 60
             base.log(f"{base.yellow}{int(wait_time/60)}분 대기!")
             time.sleep(wait_time)
+
+    def process_account_data(self, account_data):
+        # 여기서 account_data를 적절히 처리
+        # 예를 들어, JSON 형식이라면:
+        try:
+            import json
+            return json.loads(account_data)
+        except json.JSONDecodeError:
+            base.log(f"{base.red}JSON 디코딩 실패: {account_data}")
+            return None
 
 
 if __name__ == "__main__":
