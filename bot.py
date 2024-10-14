@@ -71,12 +71,16 @@ class Birds:
 
                 try:
                     # 정보 가져오기
+                    base.log(f"{base.yellow}정보 가져오기 시도")
                     get_info(data=account_data)
+                    base.log(f"{base.green}정보 가져오기 성공")
 
                     # 작업 수행
                     if self.auto_do_task:
                         base.log(f"{base.yellow}자동 작업 수행: {base.green}켜짐")
+                        base.log(f"{base.yellow}작업 수행 시도")
                         process_do_task(data=account_data)
+                        base.log(f"{base.green}작업 수행 성공")
                     else:
                         base.log(f"{base.yellow}자동 작업 수행: {base.red}꺼짐")
 
@@ -110,6 +114,7 @@ class Birds:
 
                 except Exception as e:
                     base.log(f"{base.red}계정 처리 중 오류: {base.white}{e}")
+                    base.log(f"{base.red}오류 상세 정보: {base.white}{str(e.__class__.__name__)}: {str(e)}")
 
             print()
             wait_time = 60 * 60
