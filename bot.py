@@ -71,7 +71,7 @@ class Birds:
             for no, account_data in enumerate(data):
                 base.log(self.line)
                 base.log(f"{base.green}계정 번호: {base.white}{no+1}/{num_acc}")
-                base.log(f"{base.yellow}계정 데이터: {base.white}{account_data}")
+                base.log(f"{base.yellow}계정 데이: {base.white}{account_data}")
 
                 try:
                     # 정보 가져오기
@@ -91,7 +91,7 @@ class Birds:
 
                         if hasattr(self, 'auto_speed_boost') and self.auto_speed_boost:
                             base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
-                            auto_speed_boost(parsed_data)
+                            auto_boost_speed(parsed_data)
                         if hasattr(self, 'auto_mint_worm') and self.auto_mint_worm:
                             base.log(f"{base.yellow}자동 지렁이 민팅: {base.green}켜짐")
                             auto_mint_worm(parsed_data)
@@ -167,33 +167,45 @@ def process_do_task(data):
 def auto_speed_boost(data):
     base.log(f"{base.yellow}자동 속도 부스트 시작")
     try:
-        if data is None or 'speed' not in data:
-            base.log(f"{base.red}속도 정보가 없습니다.")
+        if data is None:
+            base.log(f"{base.red}데이터가 없습니다.")
             return
-        current_speed = data['speed']
-        base.log(f"{base.green}Current Speed: x {current_speed}")
-        # 여기에 속도 부스트 로직 추가
+
+        # process_boost_speed 함수 호출
+        process_boost_speed(data)
+
+        base.log(f"{base.green}속도 부스트 완료")
+
     except Exception as e:
         base.log(f"{base.red}속도 부스트 중 오류 발생: {str(e)}")
 
 def auto_mint_worm(data):
     base.log(f"{base.yellow}자동 지렁이 민팅 시작")
     try:
-        if data is None or 'worm_mint_time' not in data:
-            base.log(f"{base.red}지렁이 민팅 정보가 없습니다.")
+        if data is None:
+            base.log(f"{base.red}데이터가 없습니다.")
             return
-        # 여기에 지렁이 민팅 로직 추가
+
+        # process_mint_worm 함수 호출
+        process_mint_worm(data)
+
+        base.log(f"{base.green}지렁이 민팅 작업 완료")
+
     except Exception as e:
         base.log(f"{base.red}지렁이 민팅 중 오류 발생: {str(e)}")
 
 def auto_hatch_egg(data):
     base.log(f"{base.yellow}자동 알 깨기 시작")
     try:
-        if data is None or 'eggs' not in data:
-            base.log(f"{base.red}알 정보가 없습니다.")
+        if data is None:
+            base.log(f"{base.red}데이터가 없습니다.")
             return
-        eggs = data['eggs']
-        # 여기에 알 깨기 로직 추가
+
+        # process_break_egg 함수 호출
+        process_break_egg(data)
+
+        base.log(f"{base.green}알 깨기 작업 완료")
+
     except Exception as e:
         base.log(f"{base.red}알 깨기 중 오류 발생: {str(e)}")
 
