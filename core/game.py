@@ -78,7 +78,7 @@ def process_break_egg(data, proxies=None):
         get_turn = turn(data=data, proxies=proxies)
         
         if get_turn is None:
-            base.log(f"{base.white}Auto Break Egg: {base.red}Failed to get turn information")
+            base.log(f"{base.white}자동 알 깨기: {base.red}턴 정보를 가져오는데 실패했습니다")
             break
         
         turns = get_turn.get("turn", 0)
@@ -89,20 +89,19 @@ def process_break_egg(data, proxies=None):
             result = start_play.get("result") if start_play else None
             if result:
                 base.log(
-                    f"{base.white}Auto Break Egg: {base.green}Play Success {base.white}| {base.green}Reward: {base.white}{result}"
+                    f"{base.white}자동 알 깨기: {base.green}플레이 성공 {base.white}| {base.green}보상: {base.white}{result}"
                 )
             else:
-                base.log(f"{base.white}Auto Break Egg: {base.red}Play Fail")
+                base.log(f"{base.white}자동 알 깨기: {base.red}플레이 실패")
         elif total > 0:
             start_claim = claim(data=data, proxies=proxies)
             if start_claim:
                 base.log(
-                    f"{base.white}Auto Break Egg: {base.green}Claim Success | Added {total} points"
+                    f"{base.white}자동 알 깨기: {base.green}보상 수령 성공 | {total} 포인트 추가됨"
                 )
             else:
-                base.log(f"{base.white}Auto Break Egg: {base.red}Claim Fail")
+                base.log(f"{base.white}자동 알 깨기: {base.red}보상 수령 실패")
             break
         else:
-            base.log(f"{base.white}Auto Break Egg: {base.red}No turn to crack egg")
+            base.log(f"{base.white}자동 알 깨기: {base.red}알을 깰 턴이 없습니다")
             break
-
