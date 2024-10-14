@@ -121,6 +121,53 @@ class Birds:
             base.log(f"{base.yellow}{int(wait_time/60)}분 대기!")
             time.sleep(wait_time)
 
+def parse_data(data):
+    base.log(f"{base.yellow}데이터 파싱 시작")
+    try:
+        # URL 디코딩
+        decoded_data = urllib.parse.unquote(data)
+        
+        # 쿼리 문자열을 딕셔너리로 변환
+        parsed_dict = dict(urllib.parse.parse_qsl(decoded_data))
+        
+        # user 필드가 JSON 문자열이므로 이를 파싱
+        if 'user' in parsed_dict:
+            parsed_dict['user'] = json.loads(parsed_dict['user'])
+        
+        base.log(f"{base.green}데이터 파싱 성공")
+        return parsed_dict
+    except Exception as e:
+        base.log(f"{base.red}데이터 파싱 중 오류 발생: {str(e)}")
+        return None
+
+def process_do_task(data):
+    base.log(f"{base.yellow}작업 수행 함수 시작")
+    
+    if data is None:
+        base.log(f"{base.red}입력 데이터가 None입니다.")
+        return
+    
+    parsed_data = parse_data(data)
+    if parsed_data is None:
+        base.log(f"{base.red}데이터 파싱 실패")
+        return
+    
+    try:
+        # 사용자 정보 출력
+        user_info = parsed_data.get('user', {})
+        base.log(f"{base.green}사용자 정보: {user_info}")
+        
+        # 여기에 실제 작업 수행 코드 추가
+        # 예: API 호출, 데이터베이스 조작 등
+        
+        base.log(f"{base.green}작업 완료")
+    
+    except Exception as e:
+        base.log(f"{base.red}작업 수행 중 오류 발생: {str(e)}")
+        base.log(f"{base.red}오류 상세 정보: {str(e.__class__.__name__)}: {str(e)}")
+
+    base.log(f"{base.yellow}작업 수행 함수 종료")
+
 if __name__ == "__main__":
     try:
         birds = Birds()
