@@ -76,11 +76,17 @@ def process_break_egg(data, proxies=None):
     while True:
         start_join = join(data=data, proxies=proxies)
         get_turn = turn(data=data, proxies=proxies)
-        turns = get_turn["turn"]
-        total = get_turn["total"]
+        
+        if get_turn is None:
+            base.log(f"{base.white}Auto Break Egg: {base.red}Failed to get turn information")
+            break
+        
+        turns = get_turn.get("turn", 0)
+        total = get_turn.get("total", 0)
+        
         if turns > 0:
             start_play = play(data=data, proxies=proxies)
-            result = start_play.get("result", None)
+            result = start_play.get("result") if start_play else None
             if result:
                 base.log(
                     f"{base.white}Auto Break Egg: {base.green}Play Success {base.white}| {base.green}Reward: {base.white}{result}"
@@ -99,3 +105,4 @@ def process_break_egg(data, proxies=None):
         else:
             base.log(f"{base.white}Auto Break Egg: {base.red}No turn to crack egg")
             break
+
