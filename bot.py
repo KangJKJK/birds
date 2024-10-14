@@ -54,57 +54,57 @@ class Birds:
             base.clear_terminal()
             print(self.banner)
             try:
-                with open(self.data_file, "r", encoding="utf-8") as file:
-                    data = file.read().splitlines()
+                data = open(self.data_file, "r", encoding="utf-8").read().splitlines()
                 base.log(f"{base.green}데이터 파일 읽기 성공")
             except Exception as e:
                 base.log(f"{base.red}데이터 파일 읽기 실패: {e}")
                 return
 
             num_acc = len(data)
+            base.log(self.line)
             base.log(f"{base.green}계정 수: {base.white}{num_acc}")
 
             for no, account_data in enumerate(data):
+                base.log(self.line)
                 base.log(f"{base.green}계정 번호: {base.white}{no+1}/{num_acc}")
                 base.log(f"{base.yellow}계정 데이터: {base.white}{account_data}")
 
                 try:
-                    processed_data = self.process_account_data(account_data)
-                    if processed_data is None:
-                        base.log(f"{base.red}계정 데이터 처리 실패. 다음 계정으로 넘어갑니다.")
-                        continue
+                    # 정보 가져오기
+                    get_info(data=account_data)
 
+                    # 작업 수행
                     if self.auto_do_task:
                         base.log(f"{base.yellow}자동 작업 수행: {base.green}켜짐")
-                        process_do_task(data=processed_data)
+                        process_do_task(data=account_data)
                     else:
                         base.log(f"{base.yellow}자동 작업 수행: {base.red}꺼짐")
 
                     # 속도 부스트
                     if self.auto_boost_speed:
                         base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
-                        process_boost_speed(data=processed_data)
+                        process_boost_speed(data=account_data)
                     else:
                         base.log(f"{base.yellow}자동 속도 부스트: {base.red}꺼짐")
 
                     # 지렁이 민팅
                     if self.auto_mint_worm:
                         base.log(f"{base.yellow}자동 지렁이 민팅: {base.green}켜짐")
-                        process_mint_worm(data=processed_data)
+                        process_mint_worm(data=account_data)
                     else:
                         base.log(f"{base.yellow}자동 지렁이 민팅: {base.red}꺼짐")
 
                     # 알 깨기
                     if self.auto_break_egg:
                         base.log(f"{base.yellow}자동 알 깨기: {base.green}켜짐")
-                        process_break_egg(data=processed_data)
+                        process_break_egg(data=account_data)
                     else:
                         base.log(f"{base.yellow}자동 알 깨기: {base.red}꺼짐")
 
                     # 알 업그레이드
                     if self.auto_upgrade_egg:
                         base.log(f"{base.yellow}자동 알 업그레이드: {base.green}켜짐")
-                        process_upgrade(data=processed_data)
+                        process_upgrade(data=account_data)
                     else:
                         base.log(f"{base.yellow}자동 알 업그레이드: {base.red}꺼짐")
 
@@ -115,26 +115,6 @@ class Birds:
             wait_time = 60 * 60
             base.log(f"{base.yellow}{int(wait_time/60)}분 대기!")
             time.sleep(wait_time)
-
-       def process_account_data(self, account_data):
-        try:
-            # URL 디코딩 및 쿼리 문자열 파싱
-            decoded_data = urllib.parse.unquote(account_data.strip())
-            parsed_data = urllib.parse.parse_qs(decoded_data)
-            
-            processed_data = {
-                'query_id': parsed_data.get('query_id', [None])[0],
-                'user': json.loads(parsed_data.get('user', ['{}'])[0]),
-                'auth_date': parsed_data.get('auth_date', [None])[0],
-                'hash': parsed_data.get('hash', [None])[0]
-            }
-            
-            base.log(f"{base.green}데이터 처리 성공: {base.white}{processed_data}")
-            return processed_data
-        except Exception as e:
-            base.log(f"{base.red}데이터 처리 실패: {base.white}{e}")
-            base.log(f"{base.yellow}원본 데이터: {base.white}{account_data}")
-            return None
 
 if __name__ == "__main__":
     try:
