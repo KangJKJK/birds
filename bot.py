@@ -1,4 +1,5 @@
 import sys
+import urllib.parse
 
 sys.dont_write_bytecode = True
 
@@ -117,8 +118,8 @@ class Birds:
 
     def process_account_data(self, account_data):
         try:
-            # 쿼리 ID는 이미 URL 디코딩되어 있다고 가정
-            query_id = account_data.strip()
+            # 쿼리 ID를 URL 디코딩
+            query_id = urllib.parse.unquote(account_data.strip())
             
             processed_data = {
                 'query_id': query_id
@@ -130,6 +131,7 @@ class Birds:
             base.log(f"{base.red}데이터 처리 실패: {base.white}{e}")
             base.log(f"{base.yellow}원본 데이터: {base.white}{account_data}")
             return None
+
 
 if __name__ == "__main__":
     try:
