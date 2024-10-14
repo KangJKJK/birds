@@ -64,7 +64,11 @@ class Birds:
                     # 작업 수행
                     if self.auto_do_task:
                         base.log(f"{base.yellow}자동 작업 수행: {base.green}켜짐")
-                        process_do_task(data=data)
+                        try:
+                            process_do_task(data=data)
+                        except Exception as e:
+                            base.log(f"{base.red}작업 수행 중 오류: {base.white}{e}")
+                            base.log(f"{base.yellow}데이터: {base.white}{data}")
                     else:
                         base.log(f"{base.yellow}자동 작업 수행: {base.red}꺼짐")
 
@@ -100,6 +104,7 @@ class Birds:
 
                 except Exception as e:
                     base.log(f"{base.red}오류: {base.white}{e}")
+                    base.log(f"{base.yellow}데이터: {base.white}{data}")
 
             print()
             wait_time = 60 * 60
