@@ -24,6 +24,8 @@ def mint_status(data, proxies=None):
         return status
     except requests.exceptions.RequestException as e:
         base.log(f"{base.red}민트 상태 확인 중 요청 오류: {str(e)}")
+        if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 401:
+            base.log(f"{base.red}인증 오류: 토큰이 만료되었거나 유효하지 않습니다.")
     except KeyError as e:
         base.log(f"{base.red}민트 상태 데이터 파싱 오류: {str(e)}")
     except Exception as e:
@@ -53,6 +55,9 @@ def process_mint_worm(data, proxies=None):
     status = mint_status(data=data, proxies=proxies)
     if status == "MINT_OPEN":
         start_mint_worm = mint(data=data, proxies=proxies)
+        if start_mint_worm is None:
+            base.log(f"{base.white}Auto Mint Worm: {base.red}Fail - 민팅 요청 실패")
+            return
         mint_worm_status = start_mint_worm["message"] == "SUCCESS"
         if mint_worm_status:
             worm_type = start_mint_worm["minted"]["type"]
@@ -61,8 +66,10 @@ def process_mint_worm(data, proxies=None):
                 f"{base.white}Auto Mint Worm: {base.green}Success {base.white}| {base.green}Worm type: {base.white}{worm_type} - {base.green}Energy: {base.white}{energy}"
             )
         else:
-            base.log(f"{base.white}Auto Mint Worm: {base.red}Fail")
+            base.log(f"{base.white}Auto Mint Worm: {base.red}Fail - {start_mint_worm.get('message', 'Unknown error')}")
     elif status == "WAITING":
-        base.log(f"{base.white}Auto Mint Worm: {base.red}Not time to mint")
+        base.log(f"{base.white}Auto Mint Worm: {base.yellow}Not time to mint")
+    elif status is None:
+        base.log(f"{base.white}Auto Mint Worm: {base.red}상태 확인 불가 - 자세한 오류는 로그를 확인하세요")
     else:
         base.log(f"{base.white}Auto Mint Worm: {base.red}Unknown status - {status}")
