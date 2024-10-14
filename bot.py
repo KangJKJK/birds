@@ -117,18 +117,11 @@ class Birds:
 
     def process_account_data(self, account_data):
         try:
-            # URL 인코딩된 쿼리 문자열 파싱
-            parsed_data = parse_qs(account_data)
+            # 쿼리 ID는 이미 URL 디코딩되어 있다고 가정
+            query_id = account_data.strip()
             
-            # user 데이터 JSON 디코딩
-            user_data = json.loads(unquote(parsed_data['user'][0]))
-            
-            # 필요한 데이터 구조로 재구성
             processed_data = {
-                'query_id': parsed_data['query_id'][0],
-                'user': user_data,
-                'auth_date': parsed_data['auth_date'][0],
-                'hash': parsed_data['hash'][0]
+                'query_id': query_id
             }
             
             base.log(f"{base.green}데이터 처리 성공: {base.white}{processed_data}")
@@ -137,7 +130,6 @@ class Birds:
             base.log(f"{base.red}데이터 처리 실패: {base.white}{e}")
             base.log(f"{base.yellow}원본 데이터: {base.white}{account_data}")
             return None
-
 
 if __name__ == "__main__":
     try:
