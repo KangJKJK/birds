@@ -87,21 +87,21 @@ class Birds:
                     # 속도 부스트
                     if self.auto_boost_speed:
                         base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
-                        process_boost_speed(data=account_data)
+                        auto_speed_boost(parsed_data)
                     else:
                         base.log(f"{base.yellow}자동 속도 부스트: {base.red}꺼짐")
 
                     # 지렁이 민팅
                     if self.auto_mint_worm:
                         base.log(f"{base.yellow}자동 지렁이 민팅: {base.green}켜짐")
-                        process_mint_worm(data=account_data)
+                        auto_mint_worm(parsed_data)
                     else:
                         base.log(f"{base.yellow}자동 지렁이 민팅: {base.red}꺼짐")
 
                     # 알 깨기
                     if self.auto_break_egg:
                         base.log(f"{base.yellow}자동 알 깨기: {base.green}켜짐")
-                        process_break_egg(data=account_data)
+                        auto_hatch_egg(parsed_data)
                     else:
                         base.log(f"{base.yellow}자동 알 깨기: {base.red}꺼짐")
 
@@ -167,6 +167,39 @@ def process_do_task(data):
         base.log(f"{base.red}오류 상세 정보: {str(e.__class__.__name__)}: {str(e)}")
 
     base.log(f"{base.yellow}작업 수행 함수 종료")
+
+def auto_speed_boost(data):
+    base.log(f"{base.yellow}자동 속도 부스트 시작")
+    try:
+        if data is None or 'speed' not in data:
+            base.log(f"{base.red}속도 정보가 없습니다.")
+            return
+        current_speed = data['speed']
+        base.log(f"{base.green}Current Speed: x {current_speed}")
+        # 여기에 속도 부스트 로직 추가
+    except Exception as e:
+        base.log(f"{base.red}속도 부스트 중 오류 발생: {str(e)}")
+
+def auto_mint_worm(data):
+    base.log(f"{base.yellow}자동 지렁이 민팅 시작")
+    try:
+        if data is None or 'worm_mint_time' not in data:
+            base.log(f"{base.red}지렁이 민팅 정보가 없습니다.")
+            return
+        # 여기에 지렁이 민팅 로직 추가
+    except Exception as e:
+        base.log(f"{base.red}지렁이 민팅 중 오류 발생: {str(e)}")
+
+def auto_hatch_egg(data):
+    base.log(f"{base.yellow}자동 알 깨기 시작")
+    try:
+        if data is None or 'eggs' not in data:
+            base.log(f"{base.red}알 정보가 없습니다.")
+            return
+        eggs = data['eggs']
+        # 여기에 알 깨기 로직 추가
+    except Exception as e:
+        base.log(f"{base.red}알 깨기 중 오류 발생: {str(e)}")
 
 if __name__ == "__main__":
     try:
