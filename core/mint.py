@@ -9,8 +9,14 @@ def mint_status(data, proxies=None):
     url = "https://worm.birds.dog/worms/mint-status"
 
     try:
-        # URL 인코딩 적용
-        encoded_headers = {k: urllib.parse.quote(v) for k, v in headers(auth=data).items()}
+        # Get headers and ensure it's a dictionary
+        header_dict = headers(auth=data)
+        if not isinstance(header_dict, dict):
+            raise TypeError(f"headers() returned {type(header_dict)} instead of dict")
+
+        # URL encode the header values
+        encoded_headers = {k: urllib.parse.quote(v) for k, v in header_dict.items()}
+        
         response = requests.get(
             url=url,
             headers=encoded_headers,
@@ -28,6 +34,8 @@ def mint_status(data, proxies=None):
             base.log(f"{base.red}인증 오류: 토큰이 만료되었거나 유효하지 않습니다.")
     except KeyError as e:
         base.log(f"{base.red}민트 상태 데이터 파싱 오류: {str(e)}")
+    except TypeError as e:
+        base.log(f"{base.red}헤더 생성 오류: {str(e)}")
     except Exception as e:
         base.log(f"{base.red}민트 상태 확인 중 예상치 못한 오류: {str(e)}")
     return None
