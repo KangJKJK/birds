@@ -194,7 +194,7 @@ def auto_mint_worm(data):
         result = process_mint_worm(data)
         
         if result is None:
-            base.log(f"{base.yellow}Auto Mint Worm: 상태 확인 불가")
+            base.log(f"{base.yellow}Auto Mint Worm: 상태 확인 불가 - 자세한 오류는 로그를 확인하세요")
         else:
             base.log(f"{base.green}Auto Mint Worm: {result}")
 
@@ -202,8 +202,9 @@ def auto_mint_worm(data):
 
     except Exception as e:
         base.log(f"{base.red}지렁이 민팅 중 오류 발생: {str(e)}")
+        base.log(f"{base.red}오류 상세 정보: {str(e.__class__.__name__)}: {str(e)}")
 
-def auto_hatch_egg(data):
+def auto_hatch_egg(data, proxies=None):
     base.log(f"{base.yellow}자동 알 깨기 시작")
     try:
         if data is None:
@@ -211,12 +212,7 @@ def auto_hatch_egg(data):
             return
 
         # process_break_egg 함수 호출
-        result = process_break_egg(data)
-        
-        if result is None:
-            base.log(f"{base.yellow}Auto Hatch Egg: 상태 확인 불가")
-        else:
-            base.log(f"{base.green}Auto Hatch Egg: {result}")
+        process_break_egg(data, proxies)
 
         base.log(f"{base.green}알 깨기 작업 완료")
 
