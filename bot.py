@@ -10,6 +10,8 @@ from core.game import process_break_egg
 from core.upgrade import process_upgrade
 
 import time
+from urllib.parse import parse_qs, unquote
+import json
 
 
 class Birds:
@@ -66,9 +68,11 @@ class Birds:
                 base.log(f"{base.yellow}계정 데이터: {base.white}{account_data}")
 
                 try:
-                    # 데이터 처리 로직
                     processed_data = self.process_account_data(account_data)
-                    
+                    if processed_data is None:
+                        base.log(f"{base.red}계정 데이터 처리 실패. 다음 계정으로 넘어갑니다.")
+                        continue
+
                     if self.auto_do_task:
                         base.log(f"{base.yellow}자동 작업 수행: {base.green}켜짐")
                         process_do_task(data=processed_data)
@@ -112,13 +116,26 @@ class Birds:
             time.sleep(wait_time)
 
     def process_account_data(self, account_data):
-        # 여기서 account_data를 적절히 처리
-        # 예를 들어, JSON 형식이라면:
         try:
-            import json
-            return json.loads(account_data)
-        except json.JSONDecodeError:
-            base.log(f"{base.red}JSON 디코딩 실패: {account_data}")
+            # URL 인코딩된 쿼리 문자열 파싱
+            parsed_data = parse_qs(account_data)
+            
+            # user 데이터 JSON 디코딩
+            user_data = json.loads(unquote(parsed_data['user'][0]))
+            
+            # 필요한 데이터 구조로 재구성
+            processed_data = {
+                'query_id': parsed_data['query_id'][0],
+                'user': user_data,
+                'auth_date': parsed_data['auth_date'][0],
+                'hash': parsed_data['hash'][0]
+            }
+            
+            base.log(f"{base.green}데이터 처리 성공: {base.white}{processed_data}")
+            return processed_data
+        except Exception as e:
+            base.log(f"{base.red}데이터 처리 실패: {base.white}{e}")
+            base.log(f"{base.yellow}원본 데이터: {base.white}{account_data}")
             return None
 
 
