@@ -116,13 +116,17 @@ class Birds:
             base.log(f"{base.yellow}{int(wait_time/60)}분 대기!")
             time.sleep(wait_time)
 
-    def process_account_data(self, account_data):
+       def process_account_data(self, account_data):
         try:
-            # 쿼리 ID를 URL 디코딩
-            query_id = urllib.parse.unquote(account_data.strip())
+            # URL 디코딩 및 쿼리 문자열 파싱
+            decoded_data = urllib.parse.unquote(account_data.strip())
+            parsed_data = urllib.parse.parse_qs(decoded_data)
             
             processed_data = {
-                'query_id': query_id
+                'query_id': parsed_data.get('query_id', [None])[0],
+                'user': json.loads(parsed_data.get('user', ['{}'])[0]),
+                'auth_date': parsed_data.get('auth_date', [None])[0],
+                'hash': parsed_data.get('hash', [None])[0]
             }
             
             base.log(f"{base.green}데이터 처리 성공: {base.white}{processed_data}")
@@ -131,7 +135,6 @@ class Birds:
             base.log(f"{base.red}데이터 처리 실패: {base.white}{e}")
             base.log(f"{base.yellow}원본 데이터: {base.white}{account_data}")
             return None
-
 
 if __name__ == "__main__":
     try:
