@@ -41,7 +41,6 @@ class Birds:
         )
 
         self.auto_break_egg = base.get_config(
-            
             config_file=self.config_file, config_name="auto-break-egg"
         )
 
@@ -49,9 +48,15 @@ class Birds:
             config_file=self.config_file, config_name="auto-upgrade-egg"
         )
 
-        self.auto_speed_boost = True  # 또는 False, 설정에 따라
-        self.auto_mint_worm = True    # 또는 False, 설정에 따라
-        self.auto_hatch_egg = True    # 또는 False, 설정에 따라
+        self.auto_speed_boost = base.get_config(
+            config_file=self.config_file, config_name="auto-boost-speed"
+        )
+        self.auto_mint_worm = base.get_config(
+            config_file=self.config_file, config_name="auto-mint-worm"
+        )
+        self.auto_hatch_egg = base.get_config(
+            config_file=self.config_file, config_name="auto-break-egg"
+        )
 
     def main(self):
         while True:
@@ -89,13 +94,13 @@ class Birds:
                             continue
                         base.log(f"{base.green}작업 수행 성공")
 
-                        if hasattr(self, 'auto_speed_boost') and self.auto_speed_boost:
+                        if self.auto_speed_boost:
                             base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
-                            self.auto_boost_speed(parsed_data)
-                        if hasattr(self, 'auto_mint_worm') and self.auto_mint_worm:
+                            auto_boost_speed(parsed_data)
+                        if self.auto_mint_worm:
                             base.log(f"{base.yellow}자동 지렁이 민팅: {base.green}켜짐")
                             auto_mint_worm(parsed_data)
-                        if hasattr(self, 'auto_hatch_egg') and self.auto_hatch_egg:
+                        if self.auto_hatch_egg:
                             base.log(f"{base.yellow}자동 알 깨기: {base.green}켜짐")
                             auto_hatch_egg(parsed_data)
 
@@ -162,9 +167,9 @@ def process_do_task(data):
         return None
 
     base.log(f"{base.yellow}작업 수행 함수 종료")
-    return parsed_data  # 파싱된 데이터 ��환
+    return parsed_data  # 파싱된 데이터 환
 
-def auto_boost_speed(self, data):
+def auto_boost_speed(data):
     base.log(f"{base.yellow}자동 속도 부스트 시작")
     try:
         if data is None:
