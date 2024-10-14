@@ -1,6 +1,4 @@
 import requests
-from urllib.parse import parse_qs, unquote
-import json
 
 from hokireceh_claimer import base
 from core.headers import headers
@@ -60,44 +58,40 @@ def check_completed_task(data, proxies=None):
         return None
 
 
-def process_do_task(data):
-    if data is None:
-        base.log(f"{base.red}오류: 데이터가 None입니다.")
-        return
+def process_do_task(data, proxies=None):
+    task_group = get_task(data=data, proxies=proxies)
+    completed_tasks = check_completed_task(data=data, proxies=proxies)
+    for group in task_group:
+        group_name = group["name"]
+        task_list = group["tasks"]
 
-    try:
-        base.log(f"{base.yellow}처리할 데이터 구조: {base.white}{type(data)}")
-        base.log(f"{base.yellow}데이터 내용: {base.white}{data}")
+        base.log(f"{base.white}Group: {base.yellow}{group_name}")
 
-        user_info = data['user']
-        user_id = user_info['id']
-        username = user_info['username']
+        for task in task_list:
+            task_id = task["_id"]
+            task_name = task["title"]
+            channel_id = task["channelId"]
+            slug = task["slug"]
+            point = task["point"]
 
-        base.log(f"{base.green}사용자 ID: {base.white}{user_id}")
-        base.log(f"{base.green}사용자 이름: {base.white}{username}")
+            task_exists = any(item["taskId"] == task_id for item in completed_tasks)
 
-        # 자동 속도 부스트
-        base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
-        current_speed = process_speed_boost(data)
-        base.log(f"{base.green}Current Speed: x {current_speed}")
+            if task_exists:
+                base.log(f"{base.white}{task_name}: {base.green}Completed")
+            else:
+                do_task_status = do_task(
+                    data=data,
+                    task_id=task_id,
+                    channel_id=channel_id,
+                    slug=slug,
+                    point=point,
+                    proxies=proxies,
+                )
 
-        # 자동 지렁이 민팅
-        base.log(f"{base.yellow}자동 지렁이 민팅: {base.green}켜짐")
-        mint_result = process_mint_worm(data)
-        base.log(f"{base.green}Auto Mint Worm: {mint_result}")
-
-        # 자동 알 깨기
-        base.log(f"{base.yellow}자동 알 깨기: {base.green}켜짐")
-        egg_result = process_break_egg(data)
-        base.log(f"{base.green}Auto Break Egg: {egg_result}")
-
-    except KeyError as e:
-        base.log(f"{base.red}키 오류: {base.white}{e}")
-        base.log(f"{base.yellow}데이터에서 필요한 키를 찾을 수 없습니다.")
-    except Exception as e:
-        base.log(f"{base.red}작업 수행 중 오류: {base.white}{e}")
-    finally:
-        base.log(f"{base.yellow}처리된 데이터: {base.white}{data}")
+                if do_task_status:
+                    base.log(f"{base.white}{task_name}: {base.green}Completed")
+                else:
+                    base.log(f"{base.white}{task_name}: {base.red}Incomplete")
 
 
 def boost_speed(data, proxies=None):
