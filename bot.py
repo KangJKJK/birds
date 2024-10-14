@@ -79,31 +79,21 @@ class Birds:
                     if self.auto_do_task:
                         base.log(f"{base.yellow}자동 작업 수행: {base.green}켜짐")
                         base.log(f"{base.yellow}작업 수행 시도")
-                        process_do_task(data=account_data)
+                        parsed_data = process_do_task(account_data)
+                        if parsed_data is None:
+                            base.log(f"{base.red}작업 수행 실패")
+                            continue
                         base.log(f"{base.green}작업 수행 성공")
-                    else:
-                        base.log(f"{base.yellow}자동 작업 수행: {base.red}꺼짐")
 
-                    # 속도 부스트
-                    if self.auto_boost_speed:
+                    if self.auto_speed_boost:
                         base.log(f"{base.yellow}자동 속도 부스트: {base.green}켜짐")
                         auto_speed_boost(parsed_data)
-                    else:
-                        base.log(f"{base.yellow}자동 속도 부스트: {base.red}꺼짐")
-
-                    # 지렁이 민팅
                     if self.auto_mint_worm:
                         base.log(f"{base.yellow}자동 지렁이 민팅: {base.green}켜짐")
                         auto_mint_worm(parsed_data)
-                    else:
-                        base.log(f"{base.yellow}자동 지렁이 민팅: {base.red}꺼짐")
-
-                    # 알 깨기
-                    if self.auto_break_egg:
+                    if self.auto_hatch_egg:
                         base.log(f"{base.yellow}자동 알 깨기: {base.green}켜짐")
                         auto_hatch_egg(parsed_data)
-                    else:
-                        base.log(f"{base.yellow}자동 알 깨기: {base.red}꺼짐")
 
                     # 알 업그레이드
                     if self.auto_upgrade_egg:
@@ -145,12 +135,12 @@ def process_do_task(data):
     
     if data is None:
         base.log(f"{base.red}입력 데이터가 None입니다.")
-        return
+        return None
     
     parsed_data = parse_data(data)
     if parsed_data is None:
         base.log(f"{base.red}데이터 파싱 실패")
-        return
+        return None
     
     try:
         # 사용자 정보 출력
@@ -165,8 +155,10 @@ def process_do_task(data):
     except Exception as e:
         base.log(f"{base.red}작업 수행 중 오류 발생: {str(e)}")
         base.log(f"{base.red}오류 상세 정보: {str(e.__class__.__name__)}: {str(e)}")
+        return None
 
     base.log(f"{base.yellow}작업 수행 함수 종료")
+    return parsed_data  # 파싱된 데이터 반환
 
 def auto_speed_boost(data):
     base.log(f"{base.yellow}자동 속도 부스트 시작")
